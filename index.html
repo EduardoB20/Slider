@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação Arrays PHP - SWI Grupo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #05070f;
+            --card-bg: #0f131e;
+            --php-purple: #777bb4;
+            --text: #f8fafc;
+            --code-bg: #0a0d14;
+            --green: #10b981;
+            --orange: #f59e0b;
+            --red: #e06c75;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            background: rgba(5, 7, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+
+        .nav-logo span { color: var(--php-purple); }
+
+        .nav-links { display: flex; gap: 12px; }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links button:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links button.active-nav {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* --- SEÇÕES / ABAS --- */
+        .page-content {
+            flex: 1;
+            display: none;
+            padding: 40px 8%;
+            animation: fadeIn 0.4s ease forwards;
+            overflow: hidden; 
+        }
+
+        .page-content.active-page { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HOME --- */
+        #home-view {
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+
+        #home-view h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 3rem;
+            background: linear-gradient(to right, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .team-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .team-member { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+
+        .member-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #131927;
+            border: 2px dashed rgba(255,255,255,0.2);
+        }
+
+        .member-name { font-size: 1.1rem; font-weight: 600; color: #e2e8f0; }
+
+        /* --- LAYOUT DOS TEMAS --- */
+        .slide-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 1.5rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            height: 58vh; 
+        }
+
+        .container-estrutura {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            height: 58vh;
+        }
+
+        /* Painel do Código */
+        .code-window {
+            background: var(--code-bg);
+            padding: 25px;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            line-height: 1.7;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+            overflow: hidden; 
+            white-space: pre-wrap;
+        }
+
+        /* Paleta de Cores do Código */
+        .keyword { color: #c678dd; }
+        .func { color: #61afef; }
+        .str { color: #98c379; transition: all 0.2s; }
+        .num { color: #d19a66; }
+        .var { color: #e06c75; transition: all 0.2s; }
+        .comment { color: #5c6370; font-style: italic; }
+
+        /* Destaque visual ao digitar */
+        .live-typing {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0 4px;
+            border-radius: 4px;
+            border-bottom: 2px solid var(--php-purple);
+        }
+
+        /* Animações dos Itens do Array */
+        .code-item {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 4px;
+            padding: 2px 4px;
+            display: inline-block;
+        }
+
+        .code-item.scanning {
+            background-color: rgba(245, 158, 11, 0.25);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+            transform: scale(1.05);
+            color: #fff;
+        }
+
+        .code-item.not-found {
+            background-color: rgba(224, 108, 117, 0.3);
+            box-shadow: 0 0 10px rgba(224, 108, 117, 0.4);
+            color: #fff;
+        }
+
+        .code-item.found {
+            background-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+            transform: scale(1.05);
+            color: #fff;
+        }
+
+        /* Animações do Bloco IF */
+        .if-block {
+            display: inline-block;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            padding: 2px 6px;
+            margin-left: -6px;
+        }
+
+        .if-block.testing {
+            background-color: rgba(245, 158, 11, 0.2);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+            border-left: 3px solid var(--orange);
+        }
+
+        .if-block.true {
+            background-color: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+            border-left: 3px solid var(--green);
+        }
+
+        .if-block.false {
+            background-color: rgba(224, 108, 117, 0.2);
+            box-shadow: 0 0 12px rgba(224, 108, 117, 0.3);
+            border-left: 3px solid var(--red);
+        }
+
+        /* Painel de Interação (Direita) */
+        .interaction-window {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+            border-left: 1px solid var(--border);
+            padding-left: 30px;
+        }
+
+        .controls { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        
+        input {
+            width: 100%;
+            background: var(--code-bg);
+            border: 1px solid #2d3748;
+            padding: 14px;
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        
+        input:focus { border-color: var(--php-purple); }
+
+        .btn-group { display: flex; gap: 12px; }
+
+        button {
+            flex: 1;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover { filter: brightness(0.9); transform: translateY(-1px); }
+
+        .btn-secondary { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .console {
+            width: 100%;
+            padding: 16px;
+            background: #020408;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: #d1d5db; /* Cor padrao terminal */
+            border: 1px solid rgba(255,255,255,0.02);
+            min-height: 52px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo" onclick="showPage('home')">Arrays <span>PHP</span></div>
+        <div class="nav-links">
+            <button id="btn-home" class="active-nav" onclick="showPage('home')">Início</button>
+            <button id="btn-estrutura" onclick="showPage('estrutura')">Estrutura</button>
+            <button id="btn-count" onclick="showPage('count')">count()</button>
+            <button id="btn-in_array" onclick="showPage('in_array')">in_array()</button>
+            <button id="btn-array_search" onclick="showPage('array_search')">array_search()</button>
+            <button id="btn-array_key_exists" onclick="showPage('array_key_exists')">array_key_exists()</button>
+        </div>
+    </nav>
+
+    <div id="home-view" class="page-content active-page">
+        <h1>Apresentação Arrays PHP</h1>
+        <div class="team-container">
+            <div class="team-member"><div class="member-img"></div><span class="member-name">Eduardo B</span></div>
+            <div class="team-member"><div class="member-img"></div><span class="member-name">Isabela</span></div>
+            <div class="team-member"><div class="member-img"></div><span class="member-name">Joao</span></div>
+            <div class="team-member"><div class="member-img"></div><span class="member-name">Anjos</span></div>
+            <div class="team-member"><div class="member-img"></div><span class="member-name">Lais</span></div>
+        </div>
+    </div>
+
+    <div id="estrutura-view" class="page-content">
+        <h2 class="slide-title">Estrutura de Arrays</h2>
+        <div class="container-estrutura">
+            <div class="code-window">
+<span class="comment">// 1. ARRAY INDEXADO (Numérico)</span>
+<span class="var">$frutas</span> = [<span class="str">"Maçã"</span>, <span class="str">"Banana"</span>, <span class="str">"Laranja"</span>];
+
+<span class="comment">/* Organização Interna:
+   [0] => "Maçã"
+   [1] => "Banana"
+   [2] => "Laranja"
+*/</span>
+            </div>
+            <div class="code-window">
+<span class="comment">// 2. ARRAY ASSOCIATIVO (Chave => Valor)</span>
+<span class="var">$usuario</span> = [
+    <span class="str">"id"</span>    => <span class="num">105</span>,
+    <span class="str">"nome"</span>  => <span class="str">"Carlos"</span>,
+    <span class="str">"admin"</span> => <span class="keyword">true</span>
+];
+            </div>
+        </div>
+    </div>
+
+    <div id="count-view" class="page-content">
+        <h2 class="slide-title">count()</h2>
+        <div class="container">
+            <div class="code-window">
+<span class="var">$frutas</span> = [ <span id="code-frutas-list"></span> ];
+
+<span class="keyword">echo</span> <span class="func">count</span>(<span class="var">$frutas</span>);
+<span class="comment">// Retorna a quantidade de elementos</span>
+            </div>
+            <div class="interaction-window">
+                <div class="controls">
+                    <div class="btn-group">
+                        <button onclick="addCount()">Adicionar (+1)</button>
+                        <button class="btn-secondary" onclick="popCount()">Remover (-1)</button>
+                    </div>
+                </div>
+                <div class="console" id="console-count"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="in_array-view" class="page-content">
+        <h2 class="slide-title">in_array()</h2>
+        <div class="container">
+            <div class="code-window" id="code-in-array">
+<span class="var">$nomes</span> = [
+    <span class="code-item str" data-val="ana">"Ana"</span>,
+    <span class="code-item str" data-val="bob">"Bob"</span>,
+    <span class="code-item str" data-val="eva">"Eva"</span>
+];
+
+<span id="if-cond-in-array" class="if-block"><span class="keyword">if</span> (<span class="func">in_array</span>(<span id="live-in-array" class="var">$busca</span>, <span class="var">$nomes</span>))</span> {
+    <span class="keyword">echo</span> <span class="str">"Encontrou o valor!"</span>;
+}
+            </div>
+            <div class="interaction-window">
+                <div class="controls">
+                    <input type="text" id="input-in-array" placeholder="Digite Ana, Bob ou Eva...">
+                    <button onclick="runInArray()">Executar Código</button>
+                </div>
+                <div class="console" id="console-in-array"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="array_search-view" class="page-content">
+        <h2 class="slide-title">array_search()</h2>
+        <div class="container">
+            <div class="code-window" id="code-search">
+<span class="var">$cores</span> = [
+    <span class="code-item str" data-val="vermelho" data-key="0">"Vermelho"</span>,
+    <span class="code-item str" data-val="verde" data-key="1">"Verde"</span>,
+    <span class="code-item str" data-val="azul" data-key="2">"Azul"</span>
+];
+
+<span class="var">$chave</span> = <span class="func">array_search</span>(<span id="live-search" class="var">$busca</span>, <span class="var">$cores</span>);
+<span class="keyword">echo</span> <span class="var">$chave</span>;
+            </div>
+            <div class="interaction-window">
+                <div class="controls">
+                    <input type="text" id="input-search" placeholder="Cor para buscar (ex: Verde)...">
+                    <button onclick="runArraySearch()">Executar Código</button>
+                </div>
+                <div class="console" id="console-search"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="array_key_exists-view" class="page-content">
+        <h2 class="slide-title">array_key_exists()</h2>
+        <div class="container">
+            <div class="code-window" id="code-key">
+<span class="var">$user</span> = [
+    <span class="code-item str" data-key="id">"id"</span> => <span class="num">105</span>,
+    <span class="code-item str" data-key="idade">"idade"</span> => <span class="num">25</span>,
+    <span class="code-item str" data-key="cpf">"cpf"</span> => <span class="str">"123.456.789-00"</span>,
+    <span class="code-item str" data-key="cliente">"cliente"</span> => <span class="keyword">true</span>
+];
+
+<span id="if-cond-key" class="if-block"><span class="keyword">if</span> (<span class="func">array_key_exists</span>(<span id="live-key" class="var">$busca</span>, <span class="var">$user</span>))</span> {
+    <span class="keyword">echo</span> <span class="str">"Encontrei o valor"</span>;
+}
+            </div>
+            <div class="interaction-window">
+                <div class="controls">
+                    <input type="text" id="input-key" placeholder="Chave para verificar (ex: cpf)...">
+                    <button onclick="runKeyExists()">Executar Código</button>
+                </div>
+                <div class="console" id="console-key"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- GERENCIADOR DE ABAS E NAVEGAÇÃO ---
+        const pageOrder = ['home', 'estrutura', 'count', 'in_array', 'array_search', 'array_key_exists'];
+        let currentPageIndex = 0;
+
+        function showPage(pageId) {
+            currentPageIndex = pageOrder.indexOf(pageId);
+
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active-nav'));
+            
+            document.getElementById(`${pageId}-view`).classList.add('active-page');
+            
+            const activeBtn = document.getElementById(`btn-${pageId}`);
+            if (activeBtn) activeBtn.classList.add('active-nav');
+
+            resetStyles('code-in-array');
+            resetStyles('code-search');
+            resetStyles('code-key');
+            
+            // Limpa os consoles ao trocar de aba (como num terminal limpo)
+            document.querySelectorAll('.console').forEach(c => c.innerText = "");
+            renderCount(); // Garante o resultado inicial na tela do count
+        }
+
+        // Navegação por setas do teclado
+        document.addEventListener('keydown', (e) => {
+            // Ignora as setas se o usuário estiver digitando dentro de um input
+            if (document.activeElement.tagName === 'INPUT') return;
+
+            if (e.key === 'ArrowRight') {
+                if (currentPageIndex < pageOrder.length - 1) {
+                    showPage(pageOrder[currentPageIndex + 1]);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentPageIndex > 0) {
+                    showPage(pageOrder[currentPageIndex - 1]);
+                }
+            }
+        });
+
+        // --- ATUALIZAÇÃO AO VIVO DO CÓDIGO (LIVE TYPING) ---
+        function setupLiveTyping() {
+            const inputs = [
+                { inputId: 'input-in-array', spanId: 'live-in-array', defaultVar: '$busca' },
+                { inputId: 'input-search', spanId: 'live-search', defaultVar: '$busca' },
+                { inputId: 'input-key', spanId: 'live-key', defaultVar: '$alvo' }
+            ];
+
+            inputs.forEach(item => {
+                const inputElement = document.getElementById(item.inputId);
+                const spanElement = document.getElementById(item.spanId);
+
+                inputElement.addEventListener('input', (e) => {
+                    const val = e.target.value.trim();
+                    if (val === '') {
+                        spanElement.className = 'var';
+                        spanElement.innerText = item.defaultVar;
+                    } else {
+                        spanElement.className = 'str live-typing';
+                        spanElement.innerText = `"${val}"`;
+                    }
+                });
+
+                inputElement.addEventListener('blur', () => {
+                    spanElement.classList.remove('live-typing');
+                });
+            });
+        }
+
+        // --- LÓGICA DO COUNT() ---
+        let frutasArray = ["Maçã", "Banana", "Uva"];
+        const listaFrutasExtra = ['Manga', 'Abacaxi', 'Morango', 'Melancia', 'Kiwi', 'Caju'];
+
+        function renderCount() {
+            const container = document.getElementById('code-frutas-list');
+            const elements = frutasArray.map(f => `<span class="code-item str">"${f}"</span>`);
+            container.innerHTML = elements.join(', ');
+            
+            // Saída limpa, apenas o retorno do PHP.
+            document.getElementById('console-count').innerText = frutasArray.length;
+        }
+
+        function addCount() {
+            const proximaFruta = listaFrutasExtra[frutasArray.length % listaFrutasExtra.length];
+            frutasArray.push(proximaFruta);
+            renderCount();
+        }
+
+        function popCount() {
+            if(frutasArray.length > 0) {
+                frutasArray.pop();
+                renderCount();
+            }
+        }
+
+        // --- MOTOR DE ANIMAÇÃO E SAÍDA REAL ---
+        async function animateCodeSearch(containerId, consoleId, targetAttr, value, action, ifBlockId = null) {
+            const elements = document.querySelectorAll(`#${containerId} .code-item`);
+            const terminal = document.getElementById(consoleId);
+            const ifBlock = ifBlockId ? document.getElementById(ifBlockId) : null;
+            let foundIndex = -1;
+
+            terminal.innerText = ""; // Limpa terminal
+
+            // Ativa o visual de "testando" no bloco IF
+            if (ifBlock) {
+                ifBlock.classList.add('testing');
+            }
+
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].classList.add('scanning');
+                
+                await new Promise(r => setTimeout(r, 1000));
+
+                const currentVal = elements[i].getAttribute(targetAttr).toLowerCase();
+                if (currentVal === value.trim().toLowerCase()) {
+                    elements[i].classList.remove('scanning');
+                    elements[i].classList.add('found'); 
+                    foundIndex = i;
+                    break;
+                } else {
+                    elements[i].classList.remove('scanning');
+                    elements[i].classList.add('not-found'); 
+                }
+            }
+
+            // Remove o visual de testando
+            if (ifBlock) {
+                ifBlock.classList.remove('testing');
+            }
+
+            // Define o resultado visual e no terminal
+            if (foundIndex !== -1) {
+                if (ifBlock) ifBlock.classList.add('true'); // Pinta o IF de verde
+
+                if (action === 'in_array') {
+                    terminal.innerText = "Encontrou o valor!";
+                } 
+                else if (action === 'array_search') {
+                    const key = elements[foundIndex].getAttribute('data-key');
+                    terminal.innerText = key;
+                } 
+                else if (action === 'array_key_exists') {
+                    terminal.innerText = "Encontrei o valor";
+                }
+            } else {
+                if (ifBlock) ifBlock.classList.add('false'); // Pinta o IF de vermelho
+
+                // PHP imprimindo FALSO ou não entrando no IF não imprime nada visualmente.
+                terminal.innerText = "";
+            }
+        }
+
+        function runInArray() {
+            const val = document.getElementById('input-in-array').value;
+            if(!val) return;
+            resetStyles('code-in-array', 'if-cond-in-array');
+            animateCodeSearch('code-in-array', 'console-in-array', 'data-val', val, 'in_array', 'if-cond-in-array');
+        }
+
+        function runArraySearch() {
+            const val = document.getElementById('input-search').value;
+            if(!val) return;
+            resetStyles('code-search');
+            animateCodeSearch('code-search', 'console-search', 'data-val', val, 'array_search');
+        }
+
+        function runKeyExists() {
+            const val = document.getElementById('input-key').value;
+            if(!val) return;
+            resetStyles('code-key', 'if-cond-key');
+            animateCodeSearch('code-key', 'console-key', 'data-key', val, 'array_key_exists', 'if-cond-key');
+        }
+
+        function resetStyles(containerId, ifBlockId = null) {
+            // Reseta cores dos itens do array
+            document.querySelectorAll(`#${containerId} .code-item`).forEach(el => {
+                el.classList.remove('found', 'scanning', 'not-found');
+            });
+
+            // Reseta cor do bloco IF se houver
+            if (ifBlockId) {
+                const ifBlock = document.getElementById(ifBlockId);
+                if (ifBlock) {
+                    ifBlock.classList.remove('testing', 'true', 'false');
+                }
+            }
+        }
+        
+        // Inicializações
+        setupLiveTyping();
+        showPage('home');
+    </script>
+</body>
+</html>
