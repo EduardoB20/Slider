@@ -334,8 +334,7 @@
         <div class="team-container">
             <div class="team-member"><div class="member-img"></div><span class="member-name">Eduardo B</span></div>
             <div class="team-member"><div class="member-img"></div><span class="member-name">Isabela</span></div>
-            <div class="team-member"><div class="member-img"></div><span class="member-name">Joao</span></div>
-            <div class="team-member"><div class="member-img"></div><span class="member-name">Anjos</span></div>
+            <div class="team-member"><div class="member-img"></div><span class="member-name">Joao Anjos</span></div>
             <div class="team-member"><div class="member-img"></div><span class="member-name">Lais</span></div>
         </div>
     </div>
@@ -345,19 +344,19 @@
         <div class="container-estrutura">
             <div class="code-window">
 <span class="comment">// 1. ARRAY INDEXADO (Numérico)</span>
-<span class="var">$frutas</span> = [<span class="str">"Maçã"</span>, <span class="str">"Banana"</span>, <span class="str">"Laranja"</span>];
+<span class="var">$frutas</span> = [<span class="str">"maçã"</span>, <span class="str">"banana"</span>, <span class="str">"laranja"</span>];
 
 <span class="comment">/* Organização Interna:
-   [0] => "Maçã"
-   [1] => "Banana"
-   [2] => "Laranja"
+   [0] => "maçã"
+   [1] => "banana"
+   [2] => "laranja"
 */</span>
             </div>
             <div class="code-window">
 <span class="comment">// 2. ARRAY ASSOCIATIVO (Chave => Valor)</span>
 <span class="var">$usuario</span> = [
     <span class="str">"id"</span>    => <span class="num">105</span>,
-    <span class="str">"nome"</span>  => <span class="str">"Carlos"</span>,
+    <span class="str">"nome"</span>  => <span class="str">"carlos"</span>,
     <span class="str">"admin"</span> => <span class="keyword">true</span>
 ];
             </div>
@@ -390,9 +389,9 @@
         <div class="container">
             <div class="code-window" id="code-in-array">
 <span class="var">$nomes</span> = [
-    <span class="code-item str" data-val="ana">"Ana"</span>,
-    <span class="code-item str" data-val="bob">"Bob"</span>,
-    <span class="code-item str" data-val="eva">"Eva"</span>
+    <span class="code-item str" data-val="ana">"ana"</span>,
+    <span class="code-item str" data-val="bob">"bob"</span>,
+    <span class="code-item str" data-val="eva">"eva"</span>
 ];
 
 <span id="if-cond-in-array" class="if-block"><span class="keyword">if</span> (<span class="func">in_array</span>(<span id="live-in-array" class="var">$busca</span>, <span class="var">$nomes</span>))</span> {
@@ -401,7 +400,7 @@
             </div>
             <div class="interaction-window">
                 <div class="controls">
-                    <input type="text" id="input-in-array" placeholder="Digite Ana, Bob ou Eva...">
+                    <input type="text" id="input-in-array" placeholder="Digite ana, bob ou eva...">
                     <button onclick="runInArray()">Executar Código</button>
                 </div>
                 <div class="console" id="console-in-array"></div>
@@ -414,9 +413,9 @@
         <div class="container">
             <div class="code-window" id="code-search">
 <span class="var">$cores</span> = [
-    <span class="code-item str" data-val="vermelho" data-key="0">"Vermelho"</span>,
-    <span class="code-item str" data-val="verde" data-key="1">"Verde"</span>,
-    <span class="code-item str" data-val="azul" data-key="2">"Azul"</span>
+    <span class="code-item str" data-val="vermelho" data-key="0">"vermelho"</span>,
+    <span class="code-item str" data-val="verde" data-key="1">"verde"</span>,
+    <span class="code-item str" data-val="azul" data-key="2">"azul"</span>
 ];
 
 <span class="var">$chave</span> = <span class="func">array_search</span>(<span id="live-search" class="var">$busca</span>, <span class="var">$cores</span>);
@@ -424,7 +423,7 @@
             </div>
             <div class="interaction-window">
                 <div class="controls">
-                    <input type="text" id="input-search" placeholder="Cor para buscar (ex: Verde)...">
+                    <input type="text" id="input-search" placeholder="Cor para buscar (ex: verde)...">
                     <button onclick="runArraySearch()">Executar Código</button>
                 </div>
                 <div class="console" id="console-search"></div>
@@ -528,8 +527,8 @@
         }
 
         // --- LÓGICA DO COUNT() ---
-        let frutasArray = ["Maçã", "Banana", "Uva"];
-        const listaFrutasExtra = ['Manga', 'Abacaxi', 'Morango', 'Melancia', 'Kiwi', 'Caju'];
+        let frutasArray = ["maçã", "banana", "uva"];
+        const listaFrutasExtra = ['manga', 'abacaxi', 'morango', 'melancia', 'kiwi', 'caju'];
 
         function renderCount() {
             const container = document.getElementById('code-frutas-list');
@@ -572,8 +571,11 @@
                 
                 await new Promise(r => setTimeout(r, 1000));
 
-                const currentVal = elements[i].getAttribute(targetAttr).toLowerCase();
-                if (currentVal === value.trim().toLowerCase()) {
+                // Agora pega o valor exatamente como está no atributo (minúsculo)
+                const currentVal = elements[i].getAttribute(targetAttr);
+                
+                // Comparação exata (case-sensitive). Se o usuário digitar maiúsculo, o match irá falhar, simulando o PHP
+                if (currentVal === value.trim()) {
                     elements[i].classList.remove('scanning');
                     elements[i].classList.add('found'); 
                     foundIndex = i;
